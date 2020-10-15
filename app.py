@@ -1,3 +1,9 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 import base64
 import datetime
 import io
@@ -161,4 +167,8 @@ def update_output(content, name, date):
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1", port=8000, debug=True)
+    environment = os.getenv("ENVIRONMENT")
+    if environment == "local":
+        app.run_server(host="127.0.0.1", port=8000, debug=True)
+    else:
+        app.run_server()
