@@ -1,9 +1,5 @@
 import os
 from dotenv import load_dotenv
-
-load_dotenv()
-
-
 import base64
 import datetime
 import io
@@ -14,23 +10,19 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import dash_table
-import plotly.graph_objects as go
+
+
+from cubeviz.charts import plot_solve_time_series
+
+load_dotenv()
 
 window_sizes = [25, 50, 100]
-colors = {"background": "#111111"}
-theme = "plotly_dark"
 
-# external_stylesheets = ["viz_cube_styles.css"]
-
-# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app = dash.Dash(__name__)
-
 server = app.server
 
-style = ({"backgroundColor": colors["background"]},)
 app.layout = html.Div(
-    style={"backgroundColor": colors["background"]},
-    children=[
+    [
         dcc.Upload(
             id="upload-data",
             children=html.Div(["Drag and Drop or ", html.A("Select Files")]),
@@ -104,52 +96,6 @@ def parse_contents(contents, filename, date):
     )
 
 
-def plot_best_times(df, df_mins, window_sizes):
-    fig = go.Figure()
-
-    fig.add_trace(
-        go.Scatter(
-            x=df["num"],
-            y=df["time"],
-            mode="lines",
-            name="Everything",
-            line={"color": "white"},
-        )
-    )
-
-    for window_size in window_sizes:
-        fig.add_trace(
-            go.Scatter(
-                x=df["num"],
-                y=df[f"{window_size}_avg"],
-                mode="lines",
-                name=f"{window_size} avg",
-                # line={"color": "white"},
-            )
-        )
-
-    fig.add_trace(
-        go.Scatter(
-            x=df_mins["num"],
-            y=df_mins["best_time"],
-            mode="lines+markers",
-            # mode="lines",
-            name="Best",
-            line={"dash": "dash", "color": "yellow"},
-            marker={"size": 8},
-        )
-    )
-
-    fig.update_layout(
-        template=theme,
-        xaxis_title="Solves",
-        yaxis_title="Time (s)",
-        # title=f"Jurgen's solves as at: {today}",
-    )
-
-    return fig
-
-
 @app.callback(
     Output("output-data-upload", "children"),
     [Input("upload-data", "contents")],
@@ -160,7 +106,7 @@ def update_output(content, name, date):
         df_raw = parse_contents(content, name, date)
         df_clean = process_data(df_raw, window_sizes)
         df_mins = df_clean[df_clean["is_diff"] == True]
-        fig = plot_best_times(df_clean, df_mins, window_sizes)
+        fig = plot_solve_time_series(df_clean, df_mins, window_sizes)
         return dcc.Graph("main-graph", figure=fig)
         return fig
         # return parse_contents(content, name, date)
