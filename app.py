@@ -1,18 +1,15 @@
 import os
 from dotenv import load_dotenv
-import base64
-import datetime
-import io
-import pandas as pd
 
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
-import dash_table
 
 
 from cubeviz.charts import plot_solve_time_series
+from cubeviz.io import parse_upload_content
+from cubeviz.etl import process_timiks_data
 
 load_dotenv()
 
@@ -43,59 +40,6 @@ app.layout = html.Div(
 )
 
 
-def process_data(df, window_sizes):
-    df["num"] = df.index
-
-    df["date"] = pd.to_datetime(df["date"])
-    df["time"] = df["ms"] / 1000
-
-    df["best_time"] = df["time"].cummin()
-    df["is_diff"] = df["best_time"] != df["best_time"].shift()
-    df["best_time"] = df[df["is_diff"]]["best_time"]
-
-    for window_size in window_sizes:
-        df[f"{window_size}_avg"] = df["time"].rolling(window=window_size).mean()
-        df[f"{window_size}_std"] = df["time"].rolling(window=window_size).std()
-
-    return df
-
-
-def parse_contents(contents, filename, date):
-    content_type, content_string = contents.split(",")
-
-    decoded = base64.b64decode(content_string)
-    try:
-        if "csv" in filename:
-            # Assume that the user uploaded a CSV file
-            df = pd.read_csv(io.StringIO(decoded.decode("utf-8")))
-        elif "xls" in filename:
-            # Assume that the user uploaded an excel file
-            df = pd.read_excel(io.BytesIO(decoded))
-    except Exception as e:
-        print(e)
-        return html.Div(["There was an error processing this file."])
-
-    return df
-
-    return html.Div(
-        [
-            html.H5(filename),
-            html.H6(datetime.datetime.fromtimestamp(date)),
-            dash_table.DataTable(
-                data=df.to_dict("records"),
-                columns=[{"name": i, "id": i} for i in df.columns],
-            ),
-            html.Hr(),  # horizontal line
-            # For debugging, display the raw contents provided by the web browser
-            html.Div("Raw Content"),
-            html.Pre(
-                contents[0:200] + "...",
-                style={"whiteSpace": "pre-wrap", "wordBreak": "break-all"},
-            ),
-        ]
-    )
-
-
 @app.callback(
     Output("output-data-upload", "children"),
     [Input("upload-data", "contents")],
@@ -103,13 +47,12 @@ def parse_contents(contents, filename, date):
 )
 def update_output(content, name, date):
     if content is not None:
-        df_raw = parse_contents(content, name, date)
-        df_clean = process_data(df_raw, window_sizes)
+        df_raw = parse_upload_content(content, name, date)
+        # TODO: add another layer to not process timiks but process some standard form
+        df_clean = process_timiks_data(df_raw, window_sizes)
         df_mins = df_clean[df_clean["is_diff"] == True]
         fig = plot_solve_time_series(df_clean, df_mins, window_sizes)
         return dcc.Graph("main-graph", figure=fig)
-        return fig
-        # return parse_contents(content, name, date)
 
 
 if __name__ == "__main__":
