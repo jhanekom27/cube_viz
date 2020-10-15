@@ -35,13 +35,13 @@ app.layout = html.Div(
             },
             multiple=False,
         ),
-        html.Div(id="output-data-upload"),
+        html.Div(id="div-solve-time-series"),
     ],
 )
 
 
 @app.callback(
-    Output("output-data-upload", "children"),
+    Output("div-solve-time-series", "children"),
     [Input("upload-data", "contents")],
     [State("upload-data", "filename"), State("upload-data", "last_modified")],
 )
@@ -52,7 +52,7 @@ def update_output(content, name, date):
         df_clean = process_timiks_data(df_raw, window_sizes)
         df_mins = df_clean[df_clean["is_diff"] == True]
         fig = plot_solve_time_series(df_clean, df_mins, window_sizes)
-        return dcc.Graph("main-graph", figure=fig)
+        return dcc.Graph("main-graph", figure=fig, className="big-plot")
 
 
 if __name__ == "__main__":
