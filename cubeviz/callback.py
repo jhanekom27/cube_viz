@@ -6,7 +6,7 @@ from cubeviz.etl import process_timiks_data
 from cubeviz.charts import plot_solve_time_series
 import dash_core_components as dcc
 
-window_sizes = [25, 50, 100]
+from cubeviz.config import load_config
 
 
 @app.callback(
@@ -15,6 +15,8 @@ window_sizes = [25, 50, 100]
     [State("upload-data", "filename"), State("upload-data", "last_modified")],
 )
 def update_output(content, name, date):
+    config = load_config()
+    window_sizes = config.window_sizes
     if content is not None:
         df_raw = parse_upload_content(content, name, date)
         # TODO: add another layer to not process timiks but process some standard form
