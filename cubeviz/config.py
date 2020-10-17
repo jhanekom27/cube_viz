@@ -17,3 +17,6 @@ def load_config():
         yaml_as_dictionary = yaml.load(file, Loader=yaml.FullLoader)
 
     return from_dict(data_class=Config, data=yaml_as_dictionary)
+
+
+cubeviz_config = load_config()
