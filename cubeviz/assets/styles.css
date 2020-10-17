@@ -569,3 +569,12 @@ there.
   border: 1px solid #002df7 !important;
 }
 
+#upload-data {
+  height: 60px;
+  line-height: 60px;
+  border-width: 1px;
+  border-style: dashed;
+  text-align: center;
+  margin: 10px;
+  color: rgb(90, 90, 90);
+}
