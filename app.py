@@ -15,8 +15,6 @@ import cubeviz.callback
 
 load_dotenv()
 
-window_sizes = [25, 50, 100]
-
 
 def get_app(app):
     app.layout = html.Div(
@@ -46,12 +44,6 @@ def get_app(app):
         ],
     )
     return app
-
-
-def plot_thing(df_clean):
-    df_mins = df_clean[df_clean["is_diff"] == True]
-    fig = plot_solve_time_series(df_clean, df_mins, window_sizes)
-    return fig
 
 
 if __name__ == "__main__":
