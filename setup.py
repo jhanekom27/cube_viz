@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cubeviz",  # Replace with your own username
-    version="0.0.1",
+    version="0.0.2",
     author="Jurgen Hanekom",
     author_email="jhanekom27@gmail.com",
     description="Package for VizCube App",
