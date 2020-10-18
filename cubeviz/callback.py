@@ -24,7 +24,9 @@ def update_output(content, name, date):
         fig = plot_solve_time_series(df_clean, df_mins, window_sizes)
         return dcc.Graph("main-graph", figure=fig, className="big-plot")
     else:
-        df_raw = pd.read_csv("data/sample.csv")
+        data_path = cubeviz_config.default_data_path
+        df_raw = pd.read_csv(data_path)
+
         df_clean = process_timiks_data(df_raw, window_sizes)
         df_mins = df_clean[df_clean["is_diff"] == True]
         fig = plot_solve_time_series(df_clean, df_mins, window_sizes)
