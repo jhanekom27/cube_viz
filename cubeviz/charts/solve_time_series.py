@@ -1,13 +1,18 @@
+from typing import List
 import plotly.graph_objects as go
+
 from cubeviz.themeing import plotly_theme
 from cubeviz.models import CVEnhanced
-from cubeviz.etl.helpers import get_relevant_windows
+
+
+def get_ao_windows(cols: List[str]) -> List[str]:
+    return [ao for ao in cols if "ao" in ao.lower()]
 
 
 def plot_solve_time_series(df: CVEnhanced, window_sizes):
-    # TODO: clean this up
-    window_sizes = get_relevant_windows(df, window_sizes)
-    df_mins = df[df["best_time_is_diff"] == True]
+    windows = get_ao_windows(df.columns)
+    df_mins = df[df.best_time_is_diff == True]
+
     fig = go.Figure()
 
     fig.add_trace(
@@ -20,13 +25,13 @@ def plot_solve_time_series(df: CVEnhanced, window_sizes):
         )
     )
 
-    for window_size in window_sizes:
+    for window in windows:
         fig.add_trace(
             go.Scatter(
                 x=df.solve_num,
-                y=df[f"Ao{window_size}"],
+                y=df[window],
                 mode="lines",
-                name=f"Ao{window_size}",
+                name=window,
             )
         )
 

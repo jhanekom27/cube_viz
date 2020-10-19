@@ -11,6 +11,7 @@ class UploadFormats:
 def parse_timiks_to_base(df: TimiksData) -> CVBase:
     df["solve_date"] = pd.to_datetime(df.date)
     df["time_sec"] = df.ms / 1000
+
     return df
 
 
