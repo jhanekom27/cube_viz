@@ -1,21 +1,20 @@
-from cubeviz.server import app
 from dash.dependencies import Input, Output, State
 import pandas as pd
-from cubeviz.etl.raw import parse_upload_content
-from cubeviz.charts import plot_solve_time_series
 import dash_core_components as dcc
-from cubeviz.etl.raw.parsing import enhance_base_data, parse_timiks_to_base
 
+from cubeviz.server import app
+from cubeviz.charts import plot_solve_time_series
+from cubeviz.etl import enhance_base_data, parse_timiks_to_base, parse_upload_content
 from cubeviz.config import cubeviz_config
 
 
+# TODO: change this to update multiple outputs
 @app.callback(
     Output("div-solve-time-series", "children"),
     [Input("upload-data", "contents")],
     [State("upload-data", "filename"), State("upload-data", "last_modified")],
 )
 def update_output(content, name, date):
-    # TODO: update this to use chain so not to process data over and over
     window_sizes = cubeviz_config.window_sizes
 
     if content is not None:

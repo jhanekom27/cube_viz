@@ -1,13 +1,12 @@
 import plotly.graph_objects as go
 from cubeviz.themeing import plotly_theme
 from cubeviz.models import CVEnhanced
-from cubeviz.etl.raw.parsing import get_relevant_windows
+from cubeviz.etl.helpers import get_relevant_windows
 
 
 def plot_solve_time_series(df: CVEnhanced, window_sizes):
     # TODO: clean this up
     window_sizes = get_relevant_windows(df, window_sizes)
-    print(df.columns)
     df_mins = df[df["best_time_is_diff"] == True]
     fig = go.Figure()
 
@@ -15,8 +14,6 @@ def plot_solve_time_series(df: CVEnhanced, window_sizes):
         go.Scatter(
             x=df.solve_num,
             y=df.time_sec,
-            # x=df["num"],
-            # y=df["time"],
             mode="lines",
             name="Everything",
             line={"color": "white"},
