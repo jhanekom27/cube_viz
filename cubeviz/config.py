@@ -8,6 +8,7 @@ from dataclasses import dataclass
 @dataclass
 class Config:
     window_sizes: List[int]
+    default_data_path: str
 
 
 def load_config():
