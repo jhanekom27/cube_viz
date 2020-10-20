@@ -2,7 +2,7 @@ from typing import List
 import plotly.graph_objects as go
 import dash_core_components as dcc
 
-from cubeviz.themeing import plotly_theme
+from cubeviz.themeing import cubeviz_theme
 from cubeviz.models import CVEnhanced
 
 
@@ -48,7 +48,7 @@ def plot_solve_time_series(df: CVEnhanced, window_sizes):
     )
 
     fig.update_layout(
-        template=plotly_theme,
+        template=cubeviz_theme,
         xaxis_title="Solves",
         yaxis_title="Time (s)",
     )

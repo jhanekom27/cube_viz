@@ -2,7 +2,7 @@ import pandas as pd
 import dash_core_components as dcc
 import plotly.graph_objects as go
 
-from cubeviz.themeing import plotly_theme
+from cubeviz.themeing import cubeviz_theme
 from cubeviz.models import CVGroupedDaily, MONTHS
 
 
@@ -43,7 +43,7 @@ def plot_frequency_heatmap(df_grouped_daily, year, months):
             "showgrid": False,
             # "autorange": "reversed",
         },
-        template=plotly_theme,
+        template=cubeviz_theme,
     )
 
     return fig
