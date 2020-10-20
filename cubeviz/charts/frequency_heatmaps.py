@@ -35,6 +35,9 @@ def plot_frequency_heatmap(df_grouped_daily, year, months):
     fig.add_trace(go.Heatmap(z=z_data, x=days_num, y=months, hoverongaps=False, zmin=0))
 
     fig.layout = go.Layout(
+        title=f"Solves per day for: {year}",
+        xaxis_title="Day of month",
+        yaxis_title="Month",
         xaxis={"showgrid": False},
         yaxis={
             "showgrid": False,
