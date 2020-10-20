@@ -1,5 +1,6 @@
 from typing import List
 import plotly.graph_objects as go
+import dash_core_components as dcc
 
 from cubeviz.themeing import plotly_theme
 from cubeviz.models import CVEnhanced
@@ -53,3 +54,9 @@ def plot_solve_time_series(df: CVEnhanced, window_sizes):
     )
 
     return fig
+
+
+def get_solve_times_graph(df_cv_enhanced, window_sizes):
+    fig_solve_times = plot_solve_time_series(df_cv_enhanced, window_sizes)
+
+    return dcc.Graph("main-graph", figure=fig_solve_times, className="big-plot")

@@ -1,16 +1,22 @@
 from dash.dependencies import Input, Output, State
 import pandas as pd
-import dash_core_components as dcc
 
 from cubeviz.server import app
-from cubeviz.charts import plot_solve_time_series
-from cubeviz.etl import enhance_base_data, parse_timiks_to_base, parse_upload_content
+from cubeviz.charts import get_solve_times_graph, get_all_frequency_heatmaps
+from cubeviz.etl import (
+    enhance_base_data,
+    parse_timiks_to_base,
+    parse_upload_content,
+    group_enhanced_by_day,
+)
 from cubeviz.config import cubeviz_config
 
 
-# TODO: change this to update multiple outputs
 @app.callback(
-    Output("div-solve-time-series", "children"),
+    [
+        Output("div-solve-time-series", "children"),
+        Output("div-frequency-heatmaps", "children"),
+    ],
     [Input("upload-data", "contents")],
     [State("upload-data", "filename"), State("upload-data", "last_modified")],
 )
@@ -25,5 +31,9 @@ def update_output(content, name, date):
         df_base = parse_timiks_to_base(df_timiks_raw)
 
     df_cv_enhanced = enhance_base_data(df_base, window_sizes)
-    fig = plot_solve_time_series(df_cv_enhanced, window_sizes)
-    return dcc.Graph("main-graph", figure=fig, className="big-plot")
+    df_grouped_daily = group_enhanced_by_day(df_cv_enhanced)
+
+    solve_times_graph = get_solve_times_graph(df_cv_enhanced, window_sizes)
+    div_frequency_heatmaps = get_all_frequency_heatmaps(df_grouped_daily)
+
+    return (solve_times_graph, div_frequency_heatmaps)
