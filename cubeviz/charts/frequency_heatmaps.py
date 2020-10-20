@@ -2,7 +2,8 @@ import pandas as pd
 import dash_core_components as dcc
 import plotly.graph_objects as go
 
-from cubeviz.themeing import plotly_theme
+
+from cubeviz.themeing import cubeviz_theme, CVColors, CVThemes
 from cubeviz.models import CVGroupedDaily, MONTHS
 
 
@@ -27,12 +28,21 @@ def plot_frequency_heatmap(df_grouped_daily, year, months):
             y=months,
             hoverongaps=False,
             zmin=0,
-            colorscale=[[0, "rgb(17, 17, 17)"], [1, "rgb(17, 17, 17)"]],
+            colorscale=[[0, CVColors.BACKGROUND], [1, CVColors.BACKGROUND]],
             showscale=False,
         )
     )
 
-    fig.add_trace(go.Heatmap(z=z_data, x=days_num, y=months, hoverongaps=False, zmin=0))
+    fig.add_trace(
+        go.Heatmap(
+            z=z_data,
+            x=days_num,
+            y=months,
+            hoverongaps=False,
+            zmin=0,
+            colorscale=CVThemes.HEATMAP_COLORSCALE,
+        )
+    )
 
     fig.layout = go.Layout(
         title=f"Solves per day for: {year}",
@@ -43,8 +53,8 @@ def plot_frequency_heatmap(df_grouped_daily, year, months):
             "showgrid": False,
             # "autorange": "reversed",
         },
-        template=plotly_theme,
     )
+    fig.update_layout(template=cubeviz_theme)
 
     return fig
 
