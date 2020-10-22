@@ -4,6 +4,15 @@ from cubeviz.helpers import load_text
 from cubeviz.themeing import CVColors
 
 
+def display_error_message(message):
+    return html.Div(
+        [
+            html.H1("There was an error processing this file!", style={"color": "red"}),
+            html.H2(str(message), style={"color": "red"}),
+        ]
+    )
+
+
 def upload_window():
     return dcc.Upload(
         id="upload-data",
@@ -33,5 +42,9 @@ def get_title_value(file_name):
     ]
 
 
+def error_display():
+    return html.Div(id="div-error-display")
+
+
 def info_tab_layout():
-    return [upload_window(), uploaded_file_name(), info_markdown()]
+    return [upload_window(), error_display(), uploaded_file_name(), info_markdown()]
