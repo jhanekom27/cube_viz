@@ -3,3 +3,4 @@ something else
 foo
 a
 b
+c
