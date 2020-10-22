@@ -1,7 +1,9 @@
 from pandas import DataFrame
 import pandas as pd
+from typing import Tuple
 
 from cubeviz.models import TimiksData, CVBase
+from cubeviz.config import cubeviz_config
 
 
 class UploadFormats:
@@ -22,4 +24,12 @@ def get_data_source_format(df: DataFrame):
     if all(col in data_columns for col in timiks_columns):
         return UploadFormats.TIMIKS
     else:
-        raise Exception("Uh oh!")
+        raise Exception("Your data format could not be determined.")
+
+
+def get_base_from_sample() -> Tuple[str, CVBase]:
+    name = "sample.csv"
+    data_path = cubeviz_config.default_data_path
+    df_timiks_raw = pd.read_csv(data_path)
+    df_base = parse_timiks_to_base(df_timiks_raw)
+    return name, df_base

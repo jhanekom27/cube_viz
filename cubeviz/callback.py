@@ -6,10 +6,10 @@ from cubeviz.etl import (
     enhance_base_data,
     parse_upload_content,
     group_enhanced_by_day,
+    get_base_from_sample,
 )
 from cubeviz.layout import get_title_value, display_error_message
 from cubeviz.config import cubeviz_config
-from cubeviz.etl.helpers import get_base_from_sample
 
 
 @app.callback(
@@ -32,9 +32,9 @@ def update_output(content, name, date):
             df_base = parse_upload_content(content, name, date)
         except Exception as e:
             error_message = e
-            df_base = get_base_from_sample()
+            name, df_base = get_base_from_sample()
     else:
-        df_base = get_base_from_sample()
+        name, df_base = get_base_from_sample()
 
     df_cv_enhanced = enhance_base_data(df_base, window_sizes)
     df_grouped_daily = group_enhanced_by_day(df_cv_enhanced)

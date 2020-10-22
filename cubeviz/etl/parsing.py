@@ -26,6 +26,6 @@ def parse_upload_content(contents: str, filename: str, date) -> CVBase:
     if data_format == UploadFormats.TIMIKS:
         df = parse_timiks_to_base(df)
     else:
-        raise Exception("Uh oh!")
+        raise Exception("Your data format could not be determined.")
 
     return df
