@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import dash_core_components as dcc
 import plotly.graph_objects as go
 
@@ -7,7 +8,7 @@ from cubeviz.themeing import cubeviz_theme, CVColors, CVThemes
 from cubeviz.models import CVGroupedDaily, MONTHS
 
 
-def plot_frequency_heatmap(df_grouped_daily, year, months):
+def plot_frequency_heatmap(df_grouped_daily, year, months, zmax=None):
     df_grouped_daily = df_grouped_daily[df_grouped_daily.year == year]
     months_num = list(range(1, 13))
     days_num = list(range(1, 32))
@@ -17,7 +18,7 @@ def plot_frequency_heatmap(df_grouped_daily, year, months):
     df_year = df_year.merge(df_grouped_daily, on=["month", "day"], how="left")
 
     z_data = df_year["num_solves"].values.reshape((12, 31))
-    z_data_null = df_year["num_solves"].isna().astype("int").values.reshape((12, 31))
+    z_data_null = np.zeros((12, 31))
 
     fig = go.Figure()
 
@@ -40,6 +41,7 @@ def plot_frequency_heatmap(df_grouped_daily, year, months):
             y=months,
             hoverongaps=False,
             zmin=0,
+            zmax=zmax,
             colorscale=CVThemes.HEATMAP_COLORSCALE,
         )
     )
@@ -62,8 +64,12 @@ def plot_frequency_heatmap(df_grouped_daily, year, months):
 def get_all_frequency_heatmaps(df_grouped_daily: CVGroupedDaily):
     graphs = []
     years = sorted(list(df_grouped_daily.year.unique()), reverse=True)
+    max_solves_per_day = df_grouped_daily.num_solves.max()
+
     for year in years:
-        fig = plot_frequency_heatmap(df_grouped_daily, year, MONTHS)
+        fig = plot_frequency_heatmap(
+            df_grouped_daily, year, MONTHS, zmax=max_solves_per_day
+        )
         graph = dcc.Graph(f"frequency-heatmap-{year}", figure=fig)
         graphs.append(graph)
     return graphs
