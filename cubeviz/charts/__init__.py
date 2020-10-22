@@ -1,1 +1,2 @@
-from .solve_time_series import plot_solve_time_series
+from .solve_time_series import get_solve_times_graph
+from .frequency_heatmaps import get_all_frequency_heatmaps
